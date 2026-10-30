@@ -7,6 +7,7 @@ import importlib.util
 import json
 import os
 import re
+import shlex
 import shutil
 import socket
 from contextlib import suppress
@@ -192,6 +193,7 @@ async def detect_profile(profile: dict[str, Any]) -> AgentDetection:
                 "Python package claude-agent-sdk is not installed",
                 models,
             )
+        models = await _probe_claude_models(command, profile) or models
         return AgentDetection("ready", command, version, None, models)
 
     if profile.get("agent") == "codex":
@@ -323,6 +325,49 @@ def _claude_models_for_version(version: str | None) -> list[str]:
             continue
         models.append(model)
     return models
+
+
+async def _probe_claude_models(command: str, profile: dict[str, Any]) -> list[str] | None:
+    async def probe() -> list[str]:
+        from claude_agent_sdk import ClaudeAgentOptions, ClaudeSDKClient
+
+        env = os.environ.copy()
+        if profile.get("home"):
+            env["HOME"] = os.path.expanduser(str(profile["home"]))
+        launch_args = shlex.split(str(profile.get("launch_args") or ""))
+        options = ClaudeAgentOptions(
+            cli_path=command,
+            cwd=os.getcwd(),
+            env=env,
+            extra_args={arg: None for arg in launch_args},
+        )
+        client = ClaudeSDKClient(options)
+        try:
+            await client.connect()
+            info = await client.get_server_info()
+        finally:
+            await client.disconnect()
+
+        data = info.get("models") if isinstance(info, dict) else None
+        models: list[str] = []
+        for item in data if isinstance(data, list) else []:
+            if not isinstance(item, dict):
+                continue
+            model = item.get("resolvedModel")
+            if not isinstance(model, str) or not model.strip():
+                model = item.get("value")
+            if not isinstance(model, str) or not model.strip():
+                continue
+            model = model.strip()
+            if model not in models:
+                models.append(model)
+        return models
+
+    try:
+        # The SDK's AnyIO task group must connect and disconnect in the same task.
+        return await asyncio.wait_for(probe(), timeout=5) or None
+    except Exception:
+        return None
 
 
 async def _probe_codex_models(command: str, profile: dict[str, Any]) -> list[str] | None:
@@ -698,7 +743,7 @@ async def get_available_agent_model_entries(app_state=None) -> list[dict[str, st
             entries.append(
                 {
                     "id": model_id,
-                    "name": model_id,
+                    "name": model if config["agent"] == "claude_code" else model_id,
                     "provider": "agent",
                     "connection_id": f"agent:{config['id']}",
                     "agent_id": config["agent"],

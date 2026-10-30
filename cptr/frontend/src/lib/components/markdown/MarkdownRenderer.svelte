@@ -10,7 +10,7 @@
 	 * Styled entirely via Tailwind prose. No custom CSS.
 	 */
 
-	import { Lexer } from 'marked';
+	import { mathMarkdown } from './math';
 	import BlockRenderer from './BlockRenderer.svelte';
 
 	interface Props {
@@ -34,7 +34,7 @@
 		if (!content) return [];
 		try {
 			const processed = preprocessWikilinks(content);
-			return new Lexer().lex(processed);
+			return mathMarkdown.lexer(processed);
 		} catch {
 			return [];
 		}

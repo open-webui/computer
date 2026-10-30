@@ -4,6 +4,7 @@
 	import CodeBlock from './CodeBlock.svelte';
 	import MermaidBlock from './MermaidBlock.svelte';
 	import InlineRenderer from './InlineRenderer.svelte';
+	import KatexRenderer from './KatexRenderer.svelte';
 	import { t } from '$lib/i18n';
 
 	interface Props {
@@ -14,7 +15,9 @@
 </script>
 
 {#each tokens as token}
-	{#if token.type === 'heading'}
+	{#if token.type === 'mathBlock'}
+		<KatexRenderer text={token.text} displayMode />
+	{:else if token.type === 'heading'}
 		{@const h = token as Tokens.Heading}
 		<svelte:element this={`h${h.depth}`}>
 			<InlineRenderer items={h.tokens} />
@@ -24,6 +27,8 @@
 	{:else if token.type === 'code'}
 		{#if (token as Tokens.Code).lang === 'mermaid'}
 			<MermaidBlock code={(token as Tokens.Code).text} />
+		{:else if (token as Tokens.Code).lang === 'math'}
+			<KatexRenderer text={(token as Tokens.Code).text} displayMode />
 		{:else}
 			<CodeBlock language={(token as Tokens.Code).lang ?? ''} code={(token as Tokens.Code).text} />
 		{/if}

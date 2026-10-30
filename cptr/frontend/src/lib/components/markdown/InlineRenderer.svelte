@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Token } from 'marked';
+	import KatexRenderer from './KatexRenderer.svelte';
 	import { openFileTab, setFileBrowserCwd, setActiveTab } from '$lib/stores';
 	import { t } from '$lib/i18n';
 
@@ -28,7 +29,9 @@
 </script>
 
 {#each items as item}
-	{#if item.type === 'text'}
+	{#if item.type === 'mathInline'}
+		<KatexRenderer text={item.text} displayMode={item.displayMode} />
+	{:else if item.type === 'text'}
 		{#if 'tokens' in item && item.tokens}
 			<svelte:self items={item.tokens} />
 		{:else}

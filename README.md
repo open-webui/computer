@@ -29,11 +29,15 @@ MCP tool servers require the optional MCP dependencies: `pip install 'cptr[mcp]'
 To install every optional feature group, use `pip install 'cptr[all]'`.
 The Docker image includes all optional feature groups.
 
-Or with [uv](https://docs.astral.sh/uv/): `uvx cptr@latest run`
-
 On Windows, if opening a terminal reports a missing `VCRUNTIME140.dll` or Universal CRT DLL, install Microsoft's [Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist) and restart `cptr`.
 
 Opens in your browser at `http://localhost:8000`.
+
+### Run with uv
+
+```bash
+uvx cptr@latest run
+```
 
 ### Access from your phone
 

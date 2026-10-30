@@ -16,6 +16,49 @@
 
 	let { item, pairedOutput, done, chatId, messageId, toolLabel, onapprove }: Props = $props();
 
+	function isToolResultError(value: unknown): boolean {
+		if (typeof value === 'string') {
+			const text = value.trim().toLowerCase();
+			if (
+				text.startsWith('error:') ||
+				text.startsWith('exception:') ||
+				text.startsWith('traceback') ||
+				text.startsWith('http error!')
+			) {
+				return true;
+			}
+		}
+
+		let parsed = value;
+		while (typeof parsed === 'string') {
+			try {
+				parsed = JSON.parse(parsed);
+			} catch {
+				break;
+			}
+		}
+		if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return false;
+
+		const result = parsed as Record<string, unknown>;
+		const error = result.error;
+		if (
+			(typeof error === 'string' && error.trim().length > 0) ||
+			(typeof error === 'object' && error !== null)
+		) {
+			return true;
+		}
+
+		const status = typeof result.status === 'string' ? result.status.trim().toLowerCase() : '';
+		if (status === 'error' || status === 'failed') return true;
+
+		const message = result.message;
+		return (
+			(result.success === false || result.ok === false) &&
+			((typeof message === 'string' && message.trim().length > 0) ||
+				(typeof message === 'object' && message !== null))
+		);
+	}
+
 	let expanded = $state($expandToolDetails || item.name === 'ask_user');
 	$effect(() => {
 		expanded = $expandToolDetails || item.name === 'ask_user';
@@ -27,7 +70,10 @@
 	const isExecuting = $derived(
 		item.status === 'running' || item.status === 'in_progress' || (!item.status && !done)
 	);
-	const isDone = $derived(item.status === 'completed');
+	const isError = $derived(
+		item.status === 'failed' || isToolResultError(pairedOutput?.output ?? '')
+	);
+	const isDone = $derived(item.status === 'completed' || isError);
 	const isRejected = $derived(item.status === 'rejected');
 	const isPending = $derived(item.status === 'pending');
 	const isAskUser = $derived(toolName === 'ask_user');
@@ -124,6 +170,23 @@
 					>
 						<path stroke-linecap="round" stroke-linejoin="round" d="m5 12 3 3 5-7" />
 						<path stroke-linecap="round" stroke-linejoin="round" d="M13 7h6M13 12h6M13 17h6" />
+					</svg>
+				</div>
+			{:else if isError}
+				<div class="text-red-500 dark:text-red-400">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="2"
+						stroke="currentColor"
+						class="size-4"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							d="M12 9v4m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+						/>
 					</svg>
 				</div>
 			{:else if isDone}

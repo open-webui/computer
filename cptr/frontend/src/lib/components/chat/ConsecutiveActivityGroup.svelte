@@ -32,6 +32,49 @@
 		onapprove
 	}: Props = $props();
 
+	function isToolResultError(value: unknown): boolean {
+		if (typeof value === 'string') {
+			const text = value.trim().toLowerCase();
+			if (
+				text.startsWith('error:') ||
+				text.startsWith('exception:') ||
+				text.startsWith('traceback') ||
+				text.startsWith('http error!')
+			) {
+				return true;
+			}
+		}
+
+		let parsed = value;
+		while (typeof parsed === 'string') {
+			try {
+				parsed = JSON.parse(parsed);
+			} catch {
+				break;
+			}
+		}
+		if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return false;
+
+		const result = parsed as Record<string, unknown>;
+		const error = result.error;
+		if (
+			(typeof error === 'string' && error.trim().length > 0) ||
+			(typeof error === 'object' && error !== null)
+		) {
+			return true;
+		}
+
+		const status = typeof result.status === 'string' ? result.status.trim().toLowerCase() : '';
+		if (status === 'error' || status === 'failed') return true;
+
+		const message = result.message;
+		return (
+			(result.success === false || result.ok === false) &&
+			((typeof message === 'string' && message.trim().length > 0) ||
+				(typeof message === 'object' && message !== null))
+		);
+	}
+
 	let expanded = $state($expandToolDetails);
 	$effect(() => {
 		expanded = $expandToolDetails;
@@ -41,14 +84,19 @@
 		reasoning.some((ri: any) => ri.status === 'in_progress' || ri.status === 'running')
 	);
 	const hasPending = $derived(
-		(!done && calls.some((c: any) => c.status !== 'completed' && c.status !== 'rejected')) ||
+		(!done && calls.some((c: any) => !['completed', 'failed', 'rejected'].includes(c.status))) ||
 			hasReasoningPending
 	);
 	const allDone = $derived(
-		(calls.length === 0 || calls.every((c: any) => c.status === 'completed')) &&
+		(calls.length === 0 || calls.every((c: any) => ['completed', 'failed'].includes(c.status))) &&
 			!hasReasoningPending
 	);
 	const hasRejected = $derived(calls.some((c: any) => c.status === 'rejected'));
+	const hasError = $derived(
+		calls.some(
+			(c: any) => c.status === 'failed' || isToolResultError(outputs.get(c.call_id)?.output ?? '')
+		)
+	);
 	const pendingCalls = $derived(calls.filter((c: any) => c.status === 'pending'));
 	const hasPendingApproval = $derived(pendingCalls.length > 0);
 	const isThoughtOnly = $derived(calls.length === 0);
@@ -132,6 +180,36 @@
 						/>
 					</svg>
 				</div>
+			{:else if hasRejected}
+				<div class="text-red-400 dark:text-red-500">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="2.5"
+						stroke="currentColor"
+						class="size-4"
+					>
+						<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+					</svg>
+				</div>
+			{:else if hasError}
+				<div class="text-red-500 dark:text-red-400">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="2"
+						stroke="currentColor"
+						class="size-4"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							d="M12 9v4m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+						/>
+					</svg>
+				</div>
 			{:else if allDone}
 				<div class="text-emerald-500 dark:text-emerald-400">
 					<svg
@@ -147,19 +225,6 @@
 							stroke-linejoin="round"
 							d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
 						/>
-					</svg>
-				</div>
-			{:else if hasRejected}
-				<div class="text-red-400 dark:text-red-500">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke-width="2.5"
-						stroke="currentColor"
-						class="size-4"
-					>
-						<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
 					</svg>
 				</div>
 			{:else}

@@ -133,7 +133,7 @@ async def chat_completion(
     Works with Anthropic, OpenAI Chat Completions, and OpenAI Responses API.
     Useful for lightweight tasks like title/summary generation.
     """
-    async with httpx.AsyncClient(timeout=httpx.Timeout(15)) as client:
+    async with httpx.AsyncClient(timeout=_STREAM_TIMEOUT) as client:
         if provider == "anthropic":
             body: dict = {
                 "model": model,
@@ -241,7 +241,7 @@ async def generate_text(
     active_connection: dict | None = None,
     active_model: str = "",
     request_params: dict | None = None,
-    timeout_seconds: float = 20,
+    timeout_seconds: float = STREAM_READ_TIMEOUT_SECONDS,
 ) -> str | None:
     """Generate text; model_id None inherits active/default."""
     from cptr.models import Config
@@ -313,7 +313,7 @@ async def generate_json(
     active_connection: dict | None = None,
     active_model: str = "",
     request_params: dict | None = None,
-    timeout_seconds: float = 20,
+    timeout_seconds: float = STREAM_READ_TIMEOUT_SECONDS,
 ) -> dict | None:
     from cptr.utils.json_parser import extract_json
 

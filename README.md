@@ -176,6 +176,8 @@ Then open the URL printed in the logs, usually `http://localhost:8000/?token=...
 Open WebUI Computer stores its state in `/data`. Mount your project into the container, like `-v "$PWD:/workspace"`, so Open WebUI Computer can access it.
 The default image includes Git and GitHub CLI (`gh`). Use `ghcr.io/open-webui/computer:browser` when agent browser automation needs Chromium.
 
+Non-streaming utility tasks also use the `CPTR_STREAM_*` timeout settings. For slow models, increase `CPTR_STREAM_READ_TIMEOUT` (default: 300 seconds), for example with `-e CPTR_STREAM_READ_TIMEOUT=14400` in `docker run`. Restart Computer after changing this setting; Open WebUI and reverse proxies may have their own timeouts.
+
 If you bind-mount a host directory to `/data`, make sure that directory is writable by the container user. SQLite needs to create and update `/data/app.db`, and host directory permissions take precedence over the image's built-in `/data` ownership.
 
 To connect a host-running OpenCode server from Docker, start OpenCode on a host-reachable interface and set the OpenCode agent Server URL to the Docker host address:

@@ -836,7 +836,6 @@ async def review_tool_approval(
         ],
         system=TOOL_APPROVAL_REVIEW_PROMPT,
         max_tokens=150,
-        timeout_seconds=20,
     )
     decision = str((parsed or {}).get("decision") or "").strip().lower()
     reason = str((parsed or {}).get("reason") or "").strip()

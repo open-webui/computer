@@ -93,7 +93,7 @@ export function sanitizeThemeConfig(value: unknown): ThemeConfig | null {
 export function defaultThemeConfig(theme: Theme): Required<ThemeColors> & { uiFont: string } {
 	const resolved = resolveThemeMode(theme);
 	return {
-		background: resolved === 'dark' ? '#0a0a0a' : '#ffffff',
+		background: resolved === 'dark' ? '#121212' : '#ffffff',
 		foreground: resolved === 'dark' ? '#d4d4d4' : '#525252',
 		uiFont: DEFAULT_UI_FONT
 	};

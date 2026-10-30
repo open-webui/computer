@@ -36,7 +36,7 @@ Opens in your browser at `http://localhost:8000`.
 ### Run with uv
 
 ```bash
-uvx cptr@latest run
+uvx cptr@latest run --host 0.0.0.0
 ```
 
 ### Access from your phone

@@ -18,7 +18,7 @@ Use it from your phone, tablet, laptop, another computer, or the machine it's ru
 
 > Start here: [Open WebUI Computer docs](https://docs.openwebui.com/ecosystem/computer/)
 
-## Install
+### Install
 
 ```bash
 pip install cptr
@@ -59,7 +59,7 @@ Most tunnels forward to `localhost`, so the default `cptr run` works. If your tu
 
 Or skip networking entirely and connect a [messaging bot](#messaging-bots) instead.
 
-## The Whole Machine
+### The Whole Machine
 
 Open WebUI Computer is the real workstation surface: files, shell, git state, workspaces, chats, tools, and sessions stay together wherever you open it.
 
@@ -76,7 +76,7 @@ Open WebUI Computer is the real workstation surface: files, shell, git state, wo
 | 🔍 **Search** | Find files by name or contents, then jump straight to a matching line. ⌘K also searches chat history. |
 | 📱 **Mobile-first** | Not a desktop UI made smaller. Built for the screen in your pocket. |
 
-## AI agent
+### AI agent
 
 AI that works where your work actually lives.
 
@@ -102,7 +102,7 @@ Bring your own API key (OpenAI, Anthropic, Ollama, or any OpenAI-compatible endp
 | 🔌 **Tool servers** | Connect external tools via MCP or OpenAPI. |
 | 🧠 **Context compaction** | Long conversations are automatically summarised to stay fast. |
 
-## Coding agents
+### Coding agents
 
 Use the subscriptions you already pay for as native backends on your own machine. No separate API key needed.
 
@@ -112,7 +112,7 @@ Add an agent profile from Settings, pick your models, and it shows up in the mod
 
 Prefer to run agents yourself? Any terminal agent (Kilo Code, Pi, and others) works in the terminal tab the way it always has.
 
-## Messaging bots
+### Messaging bots
 
 Message your computer from wherever you are. Connect the AI to your chat apps with full tool access, streaming responses, and conversations synced back to the web UI.
 
@@ -120,11 +120,11 @@ Message your computer from wherever you are. Connect the AI to your chat apps wi
 
 Ask it to check a build, push a fix, or explain a file. Switch workspaces with `/workspace`, start fresh with `/new`.
 
-## Gateway API
+### Gateway API
 
 Turn each workspace into an OpenAI-compatible agent model with real machine access. Open WebUI Computer exposes `/v1/chat/completions`, so any client that speaks OpenAI, including [Open WebUI](https://github.com/open-webui/open-webui), can use a workspace with full agent capabilities: file access, terminal, web search, tools.
 
-## More
+### More
 
 | | |
 |---|---|
@@ -139,7 +139,7 @@ Turn each workspace into an OpenAI-compatible agent model with real machine acce
 | 🌍 **10 languages** | English, Deutsch, Español, Français, Português (Brasil), Русский, 日本語, 한국어, 简体中文, 繁體中文. |
 | 🔐 **Auth** | Username/password with JWT sessions. Signup toggle for admins. |
 
-## Design principles
+### Design principles
 
 **Mobile is first-class.** The interface is built for the phone. Touch-native, portrait-native, designed for the screen people carry. Sessions survive disconnects because on a phone, they will. If a feature only works at a desk, it's not done.
 
@@ -158,7 +158,7 @@ Life is short. Touch grass. Read our [Manifesto](MANIFESTO.md).
 > Help us build open, empowering tools that put AI in people's hands.
 > [We're hiring](http://careers.openwebui.com/).
 
-## Docker
+### Docker
 
 Run Open WebUI Computer with Docker:
 
@@ -190,7 +190,7 @@ Use `http://host.docker.internal:4096` on Docker Desktop. On Linux, add `--add-h
 
 The `:dev` image is also available and tracks the `main` branch.
 
-## Air-gapped installation
+### Air-gapped installation
 
 Open WebUI Computer does not need internet access after it is installed. The Python wheel includes the built frontend assets, and the Docker image is self-contained.
 
@@ -222,12 +222,16 @@ docker run --rm -it \
 
 Core local features run from local assets. External services such as hosted model APIs, web search providers, messaging adapters, Git remotes, and MCP/OpenAPI servers still require reachable endpoints.
 
-## Security model
+### Security model
 
 Open WebUI Computer is designed as **your computer, served to you**. Once authenticated, a user has full access to the host filesystem and shell, equivalent to an SSH session. There is no path sandboxing and no per-user isolation.
 
 This is safe when you are the only user and you control the network. It is not safe if untrusted users share the instance, it is exposed to the public internet, or a reverse proxy forwards spoofable auth headers. Treat a shared Open WebUI Computer like an open SSH port.
 
-## License
+### Contributing
+
+We don't take pull requests. [Open an issue](https://github.com/open-webui/computer/issues) describing the bug or idea.
+
+### License
 
 Open Use License. Source available. All rights reserved. See [LICENSE](LICENSE). [Commercial licenses](https://openwebui.com/computer/license) and [enterprise licenses](mailto:sales@openwebui.com) available.

@@ -10,15 +10,20 @@
 [![Discord](https://img.shields.io/badge/Discord-Open_WebUI-blue?logo=discord&logoColor=white)](https://discord.gg/5rJgQTnV4s)
 [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/open-webui)
 
+> [!TIP]
+> **For new setups, we recommend Open WebUI with Open Terminal.** Use Open WebUI for chat and connect Open Terminal so your AI can edit project files and run commands. Try asking it to run your project's tests and explain any failures.
+>
+> [Get started with Open WebUI](https://docs.openwebui.com/getting-started/quick-start/) → [Install Open Terminal](https://docs.openwebui.com/features/open-terminal/setup/installation/) → [Connect it to Open WebUI](https://docs.openwebui.com/features/open-terminal/setup/connecting/)
+
 ![Open WebUI Computer Demo](./demo.png)
 
 Open WebUI Computer (`cptr`) runs on your machine and serves your whole computer to any browser: files, terminal, editor, git, browser tabs, running sessions, AI agents, and tools. It literally is your computer.
 
 Use it from your phone, tablet, laptop, another computer, or the machine it's running on. Designed to feel native on every screen. Connect your own AI via API key, plug in a coding agent you already subscribe to, or work directly in the terminal. One tool, full workstation, any device.
 
-> Start here: [Open WebUI Computer docs](https://docs.openwebui.com/ecosystem/computer/)
+[Open WebUI Computer docs](https://docs.openwebui.com/ecosystem/computer/)
 
-### Install
+### Install Open WebUI Computer
 
 ```bash
 pip install cptr
